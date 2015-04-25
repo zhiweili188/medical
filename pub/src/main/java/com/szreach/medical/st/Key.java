@@ -1,0 +1,17 @@
+/**
+ * Copyright (c) @2015-3-31. All Rights Reserved.
+ * AUTHOR: LIZHIWEI</a>
+ */
+package com.szreach.medical.st;
+
+/**
+ * @Description:
+ * @author lizhiwei
+ * @Date: 2015-3-31
+ * @Version: 1.0
+ */
+public interface Key {
+
+	public static final String 	SESSION_LOGIN_USER="_login_user";
+	public static final String 	DISPLAY_MESSAGE="msg";
+}

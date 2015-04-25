@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>  <!-- 别名 -->
+	<typeAliases>
+		<typeAlias type="com.szreach.medical.auth.menu.bean.MenuBean" alias="MenuBean" />
+		<typeAlias type="com.szreach.medical.auth.site.bean.SiteBean" alias="SiteBean" />
+		<typeAlias type="com.szreach.medical.auth.user.bean.LoginUser" alias="LoginUser" />
+		<typeAlias type="com.szreach.medical.auth.role.bean.Role" alias="Role" />
+		<typeAlias type="com.szreach.medical.auth.room.bean.Room" alias="Room" />
+		<typeAlias type="com.szreach.medical.auth.department.bean.Department" alias="Department" />
+	</typeAliases>
+<!-- 	<mappers>
+		<mapper resource="com/szreach/mediacenter/auth/menu/dao/MenuBeanMapper.xml" />
+	</mappers> -->
+</configuration>

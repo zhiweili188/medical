@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop   
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd   
+        http://www.springframework.org/schema/mvc   
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd   
+        http://www.springframework.org/schema/tx   
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+ <mvc:annotation-driven/> 
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+				<value>application/*+json;charset=UTF-8</value>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean> -->
+	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	 <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"></bean>
+  -->
+  
+  <!-- 定义环境变量文件 -->
+	<bean id="properties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath*:/email.properties</value>
+				<value>classpath*:/system.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<context:component-scan base-package="com.szreach.medical" >
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation"  expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean> 
+	
+
+	<!-- 支持上传文件 -->  
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/> 
+    
+	<!-- FreeMarker环境配置 -->
+	<!-- <bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		freemarker模板位置
+		<property name="templateLoaderPath" value="/WEB-INF/views/freemarker/" />
+	</bean> -->
+
+	<!-- <bean id="viewResolver" class="org.eric.view.viewresolver.MultiViewResover">
+		<property name="resolvers">
+			<map>
+				<entry key="jsp">
+					<bean
+						class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+						<property name="viewClass"
+							value="org.springframework.web.servlet.view.JstlView" />
+						<property name="prefix" value="/WEB-INF/views/jsp/" />
+						<property name="suffix" value=".jsp" />
+					</bean>
+				</entry>
+				<entry key="ftl">
+					<bean
+						class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+						<property name="cache" value="true" />
+						<property name="prefix" value="/" />
+						<property name="suffix" value=".ftl" />
+					</bean>
+				</entry>
+				<entry key="vm">
+					<bean
+						class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+						<property name="cache" value="true" />
+						<property name="prefix" value="/" />
+						<property name="suffix" value=".vm" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean> -->
+
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"></bean>
+	</mvc:interceptors>
+	
+	<!-- 国际化的消息资源文件 -->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <!-- 在web环境中一定要定位到classpath 否则默认到当前web应用下找  -->
+                <value>classpath:messages</value>
+            </list>
+        </property>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="cacheSeconds" value="60"/>
+    </bean>
+    
+    <!-- 邮箱服务器配置 -->  
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
+				<!--默认的编码方式 -->  
+	            <property name="defaultEncoding" value="UTF-8"/>  
+				<!--邮箱服务器的主机地址 -->  
+	            <property name="host" value="smtp.126.com"/>  
+				<!--服务器的端口号 -->  
+	            <property name="port" value="25"/>  
+				<!--连接服务器的用户名 也就是你的QQ邮箱的地址名例如xxx@qq.com-->  
+	            <property name="username" value="zhiweili188@126.com"/>  
+				<!--密码 就是你登陆邮箱的密码 -->  
+	            <property name="password" value="Zhiweili19831209"/>  
+				<!--下面就是smtp的一些设置-->  
+	            <property name="javaMailProperties">  
+	            <props>  
+				<!--设置自动登录-->  
+	             <prop key="mail.smtp.auth">true</prop>  
+				<!-- 设置端口的进入优先命令状态-->  
+	        	<prop key="mail.smtp.starttls.enable">false</prop>  
+	             </props>  
+	            </property>  
+	</bean> 
+	<!-- freemarker config -->
+	<bean id="freeMarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/email/" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">1800</prop>
+				<prop key="defaultEncoding">utf-8</prop>
+				<prop key="locale">zh_CN</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="mailService" class="com.szreach.medical.mail.service.MailServiceImpl">
+		<property name="freeMarkerConfigurer" ref="freeMarkerConfigurer" />
+		<property name="mailSender" ref="mailSender" />
+		<property name="emailFrom" value="zhiweili188@126.com" />
+		<property name="fromDisplayName" value="test" />
+		<property name="replyTo" value="364618965@qq.com" />
+	</bean>
+	
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10"/>
+		<property name="maxPoolSize" value="30"/>
+	</bean>
+	
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="suffix">
+			<value>.ftl</value>
+		</property>
+		<property name="contentType" value="text/html;charset=utf-8"></property>
+	</bean>
+	
+	
+	
+	
+		<!-- <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		定义默认的异常处理页面，当该异常类型的注册时使用
+		<property name="defaultErrorView" value="error"></property>
+		定义异常处理页面用来获取异常信息的变量名，默认名为exception
+		<property name="exceptionAttribute" value="ex"></property>
+		定义需要特殊处理的异常，用类名或完全路径名作为key，异常也页名作为值
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.szreach.medical.auth.test.ex.BusinessException">error-business</prop>
+				<prop key="com.szreach.medical.auth.test.ex.ParameterException">error-parameter</prop>
+
+				这里还可以继续扩展对不同异常类型的处理
+			</props>
+		</property>
+	</bean> -->
+	<!-- 异常处理器 -->
+	<bean id="exceptionHandler" class="com.szreach.medical.exception.GlobalExacetionHandler"></bean>
+	 <mvc:interceptors>
+         <mvc:interceptor>
+            <!-- 对所有的请求拦截使用/** ,对某个模块下的请求拦截使用：/myPath/* -->
+            <mvc:mapping path="/**" />
+              <bean id="loginIntercepter" class="com.szreach.medical.auth.intercepters.LoginIntercepter">
+		    </bean>
+        </mvc:interceptor>
+         <!-- 配置Token拦截器，防止用户重复提交数据 -->
+	    <mvc:interceptor>
+	        <mvc:mapping path="/**"/>
+	        <bean class="com.szreach.medical.common.interceper.TokenIntercepter"/>
+	    </mvc:interceptor>
+    </mvc:interceptors>
+	
+</beans>  
