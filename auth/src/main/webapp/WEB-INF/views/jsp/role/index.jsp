@@ -6,14 +6,6 @@
 <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Insert title here</title>
- 		<script src="/auth/js/easyui/jquery.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
-		<script src="/auth/js/jquery.serializeJson.js" type="text/javascript"></script>
-		<link href="/auth/js/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-		<link href="/auth/js/easyui/themes/icon.css" rel="stylesheet" type="text/css" />
-		
-		<script src="/auth/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
 		    
   <script type="text/javascript">
 	var datagrid;

@@ -9,6 +9,7 @@
 		<result property="menuLevel" column="menu_level"  javaType="int" jdbcType="INTEGER"/>
 		<result property="parentID" column="parent_id"></result>
 		<result property="menuIcon" column="menu_icon"></result>
+		<result property="systemId" column="system_id"></result>
 		<result property="menuStatus" column="menu_status"  javaType="int" jdbcType="INTEGER"/>
 	</resultMap>
 	
@@ -49,7 +50,10 @@
 				menu_icon=#{menuIcon},
 			</if>
 			<if test="menuStatus != null">
-				 menu_status=#{menuStatus}
+				 menu_status=#{menuStatus},
+			</if>
+			<if test="systemId != null">
+				 system_id=#{systemId}
 			</if>
 		 </set>
 		WHERE id = #{id}

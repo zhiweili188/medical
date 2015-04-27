@@ -5,148 +5,217 @@
 <html>
 <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title>Insert title here</title>
-	  <link href="${ctx }/js/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css" /> 
-	  <link href="${ctx }/js/ligerUI/skins/ligerui-icons.css" rel="stylesheet" type="text/css" /> 
-	  <link href="${ctx }/js/ligerUI/skins/Gray/css/all.css" rel="stylesheet" type="text/css" /> 
-	  <link href="${ctx }/css/good.css" rel="stylesheet" type="text/css" /> 
-
-	    <script src="${ctx }/js/jquery/jquery-1.3.2.min.js" type="text/javascript"></script>    
-	   <script src="${ctx }/js/ligerUI/js/core/base.js" type="text/javascript"></script>
-  			 <script src="${ctx }/js/ligerUI/js/plugins/ligerDrag.js" type="text/javascript"></script> 
-	    <script src="${ctx }/js/ligerUI/js/plugins/ligerToolBar.js" type="text/javascript"></script>
-	    <script src="${ctx }/js/ligerUI/js/plugins/ligerGrid.js"></script>
-	     <script src="${ctx }/js/ligerUI/js/plugins/ligerDialog.js" type="text/javascript"></script>
-	   
-	    <script src="${ctx }/js/jquery.cookie.js"></script>
-	    <script src="${ctx }/js/json2.js"></script>
-	    <script src="${ctx }/js/myfun.js"></script>
-	    <script src="${ctx }/js/biz.js"></script>
+		
+		<script src="${ctx }/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
 		    
   <script type="text/javascript">
-        var grid = null;
-        $(function () {
-            grid = $("#dataArea").ligerGrid({
-            	checkbox: true,
-                columns: [
+	var datagrid;
+	var rowEditor=undefined;
+	$(function(){
+		datagrid=$("#dg").datagrid({
+			url:"${ctx}/site/list.do",//加载的URL
+		    isField:"id",
+			pagination:true,//显示分页
+			pageSize:10,//分页大小
+			pageList:[10,15,20],//每页的个数
+			fit:true,//自动补全
+			fitColumns:true,
+			iconCls:"icon-save",//图标
+			
+			columns:[[      //每个列具体内容
+		              {field:'id', hidden:true },   
+		              {field:'siteName', title:'子系统',  width:100,align:'center' },
+		              {field:'siteUrl', title:'URL',  width:100,align:'center' },
+		              {field:'status', title:'状态',  width:100, align:'center',
+		            	formatter: function(val,row, index) {
+		            		if (val == 0){
+		        				return '<span>正常('+val+')</span>';
+		        			} else if (val == 9) {
+		        				return '<span style="color:red;">停用('+val+')</span>';;
+		        			}
+		            	}  
+		              }
+		          ]],
+			toolbar:[              //工具条
+			        {text:"增加",iconCls:"icon-add",handler:function(){//回调函数
+			        	
+			        	 $('#dd').dialog('open');
+			        }},
+			        {text:"删除",iconCls:"icon-remove",handler:function(){
+			        	var rows=datagrid.datagrid('getSelections');
+			  
+			        	if(rows.length<=0)
+			        	{
+			        		$.messager.alert('警告','您没有选择','error');
+			        	}
+			        	else
+			        	{
+			        		$.messager.confirm('确定','您确定要删除吗',function(t){
+			        			if(t)
+			        			{
+			        				var ids = [];
+			        				var rows = datagrid.datagrid('getSelections');
+			        				for(var i=0; i<rows.length; i++){
+			        					ids.push(rows[i].id);
+			        				}
+			        				//alert(ids.join(','));
+			        			
+			        				$.ajax({
+			        					url : '${ctx}/site/delete.do',
+			        					data : 'ids='+ids.join(','),
+			        					method: 'POST',
+			        					dataType : 'json',
+			        					success : function(r) {
+			        						if (r.success) {
+			        							$.messager.show({
+			        								msg : r.msg,
+			        								title : '成功'
+			        							});
+			        							datagrid.datagrid('reload');
+			        						} else {
+			        							$.messager.alert('错误', r.msg, 'error');
+			        						}
+			        						datagrid.datagrid('unselectAll');
+			        					}
+			        				});
+			        			
+			        			}
+			        		})
+			        	}
+			        	
+			        	
+			        }},
+			        {text:"修改",iconCls:"icon-edit",handler:function(){
+			        	var rows=datagrid.datagrid('getSelections');
+			        	if(rows.length==1)
+			        	{
+			        		/*if(rows[0].isSys == 1) {
+			        			$.messager.alert('错误', "不能修改系统角色", 'error');
+			        			return;
+			        		}*/
+			        		//alert(rows[0].id);	
+			        		$.ajax({
+	        					url : '${ctx}/site/id'+rows[0].id+'.do',
+	        					data : [],
+	        					dataType : 'json',
+	        					success : function(r) {
+	        						if (r.id) {
+	        							 $('#dd').dialog('open');
+	        							$("#siteName").textbox("setValue", r.siteName);
+	        							$("#siteUrl").textbox("setValue", r.siteUrl);
+	        							$("#id").val(r.id);
+	        						
+	        						} else {
+	        							
+	        							$.messager.alert('错误', r.msg, 'error');
+	        						}
+	        					}
+	        				});
+			        	} else {
+			        		$.messager.alert('错误', "只能选择一个数据进行修改", 'error');
+			        	}
+			        }},
+			        ]
 
-                { display: '站点名', name: 'siteName', minWidth: 60 },
-                { display: 'URL', name: 'siteUrl', minWidth: 140 }
-                ], 
-                params : [],
-                url: "${ctx }/site/list.do", 
-                toolbar: { 
-                	items: [
-                	        { text: '新增', click: add, icon: 'add'},
-                	        { text: '修改', click: update, icon: 'modify'},
-                	        { text: '删除', click: deleteSelectedData, icon: 'search2'}
-                	]
-                },
-                pageParmName: 'currPage',               //页索引参数名，(提交给服务器)
-                pagesizeParmName: 'pageSize',        //页记录数参数名，(提交给服务器)
-                width: '100%',height:'100%'
-            });
-
-
-            $("#pageloading").hide();
-        });
-        
-        function add()
-        {
-        	window.location='${ctx }/site/init_add.do';
-        /*	$.ligerDialog.open({  url: '${ctx }/site/init_add.do', height: 300,width: 500, 
-        		id: "editDailog",
-        		name: "editFrame",
-        		title: '编辑',     
-        		buttons: [ 
-        		           { text: '确定', onclick: function (item, dialog) {
-        		       			 $(window.frames["editFrame"].document).find(":submit").click();
-        		        	   
-        		           } }, 
-        		           { text: '取消', onclick: function (item, dialog) {
-        		        	   dialog.close(); 
-        		           } } ] 
-        	
-        	});
-        	*/
-        }
-        
-        function update()
-        {
-        	 var row = grid.getSelectedRow();
-             if (!row) { alert('请选择行'); return; }
-             alert(JSON.stringify(row));
-             
-        	var ids = getCheckBoxValuesArray(".dataCheckBox");alert(ids.length);
-        	if(ids.length != 1) {
-        		 $.ligerDialog.warn('请选择一条数据后进行修改。');
-        		 return;
-        	}
-        	$.ligerDialog.open({  url: '${ctx }/site/init_update.do?id='+ids, height: 300,width: 500, 
-        		id: "editDailog",
-        		name: "editFrame",
-        		title: '编辑',     
-        		buttons: [ 
-        		           { text: '确定', onclick: function (item, dialog) {
-        		       			 $(window.frames["editFrame"].document).find(":submit").click();
-        		        	   
-        		           } }, 
-        		           { text: '取消', onclick: function (item, dialog) {
-        		        	   dialog.close(); 
-        		           } } ] 
-        	
-        	});
-        	
-        }
-        
-        function deleteSelectedData()
-        {
-        	var ids = getCheckedData(grid);
-			if(ids == ""){
-				$.ligerDialog.warn('请选择');
-				return;
+		});
+		
+		 $('#dd').dialog({
+             title: "My Dialog",
+             closed:true,
+             modal: true, //dialog继承自window，而window里面有modal属性，所以dialog也可以使用
+             toolbar: [{
+					text:'Ok',
+				iconCls:'icon-ok',
+				handler:function(){
+					$('#ff').form('submit',{
+						onSubmit:function(){
+							var isValid = $(this).form('validate');
+							if(isValid) {
+								
+							}
+							return isValid;
+						},
+						success: function(){
+							$('#ff').form('clear');
+							$('#dd').dialog('close');
+						}
+					});
+				
+				}
+			},{
+				text:'Cancel',
+				handler:function(){
+					$('#dd').dialog('close');
+					$('#ff').form('clear');
+				}
+			}],
+			onOpen: function() {
+				
+			},
+			onClose: function() {
+				$('#ff').form('clear');
+				datagrid.datagrid('unselectAll');
+				datagrid.datagrid('reload');
 			}
-        	var action =new  Action({
-        		url: "${ctx }/site/del.do",
-        		params: "id="+ids,
-        		dataType:"json",
-        		callback:function(result){
-        		//	grid.reload();
-        			$.ligerDialog.success('删除成功');
-        		}
-        	});
-        	action.ajaxPostData();
-        }
-        function f_search()
-        {
-        	  var gridparms = [];
-              gridparms.push({ name: "siteName", value: $("#siteName").val() });
-             // gridparms.push({ name: "currPage", value:  grid.options.page });
-              //gridparms.push({ name: "pagesize", value: grid.options.pageSize });
-              grid.loadServerData(gridparms);
-        }
+         });
+		 
 
+	    
+		$("#btn_search").click(function(){
+			var param = $("#searchForm").serializeJson();
+			datagrid.datagrid('load', param);
+
+		});
+		});
+	
+	
+
+	
     </script>
     <style type="text/css">
     
     </style>
 </head>
-<body style="padding:6px; overflow:hidden;">
-<div id="searchbar">
-		<table>
-			<tr>
-				<td> 站点名：<input id="siteName" type="text" /></td>
-				<td> URL：<input id="siteUrl" type="text" /></td>
-				<td> <input id="btnOK" type="button" value="查询" onclick="f_search()" /></td>
-			</tr>
-		</table>
-</div>
-    <div id="dataArea" style="margin:0; padding:0"></div>
-   
+<body style="padding:0 4px; margin:0;  overflow: hidden; ">
+<div class="easyui-layout" style="width:100%;height:100%;" data-options="fit:true">
+		<div title="子系统管理" data-options="region:'north'" style="height:100px">
+		 <form id="searchForm" >
+			<table cellpadding="5">
+				    		<tr>
+				    			<td>子系统:</td>
+				    			<td><input class="easyui-textbox" type="text" id="qSiteName"  name="siteName" ></input></td>
+				
+				    			<td ><a href="#" id="btn_search" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px">Search</a></td>
+				    		</tr>
+				    		<tr>
+				    		</tr>
+				    	</table>
+				  </form>
+		</div>
+		<div data-options="region:'center'" >
+			<table id="dg" >
+			</table>
+		</div>
 
-  <div style="display:none;">
-  <!-- g data total ttt -->
+			
+	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true"> 
+				    <form id="ff" method="post" action="${ctx}/site/save.do" >
+				    		<input type="hidden" id="id" name="id">
+						<table cellpadding="5">
+				    		<tr>
+				    			<td>子系统:</td>
+				    			<td><input class="easyui-textbox" type="text" id="siteName"  name="siteName" data-options="required:true"></input></td>
+				    		</tr>
+				    		<tr>
+				    			<td>URL:</td>
+				    			<td><input class="easyui-textbox" type="text" id="siteUrl"  name="siteUrl" data-options="required:true"></input></td>
+				    		</tr>
+				    	</table>
+				    </form>
+				    
+			</div>
+			
+			
 </div>
- 
 </body>
 </html>

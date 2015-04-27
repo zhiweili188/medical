@@ -13,16 +13,9 @@ import com.szreach.medical.common.base.Persistentable;
  * @Version: 1.0
  */
 public class SiteBean extends Persistentable {
-	private Integer id;
 	private String siteName;
 	private String siteUrl;
 	private Integer status;
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
 	public String getSiteName() {
 		return siteName;
 	}

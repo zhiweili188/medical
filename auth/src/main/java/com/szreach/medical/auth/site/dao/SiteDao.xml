@@ -7,48 +7,57 @@
 		<result property="siteUrl" column="site_url" />
 		<result property="status" column="status"  javaType="int" jdbcType="INTEGER"/>
 	</resultMap>
-	<select id="getSiteByID" parameterType="int" resultMap="siteMap">
+	<select id="get" parameterType="int" resultMap="siteMap">
 		<![CDATA[ 
 		SELECT * from td_site  WHERE id = #{id}
 		]]>
 	</select>
 	
-	<insert id="insertSite" parameterType="SiteBean" useGeneratedKeys="true" keyProperty="id">
+	<insert id="insert" parameterType="SiteBean" useGeneratedKeys="true" keyProperty="id">
 		insert into td_site(id, site_name, site_url,status) values(
 		   #{id},
 		   #{siteName},
 		   #{siteUrl},
-		   #{status}
+		   0
 		)
 	</insert>
-	<update id="updateSite" parameterType="SiteBean">
+	<update id="update" parameterType="SiteBean">
 		update td_site set site_name=#{siteName},  
-		site_url=#{siteUrl},  status=#{status}
+		site_url=#{siteUrl} 
 		WHERE id = #{id}
 	</update>
 	
 	<select id="count" resultType="int">
         select count(*) c from td_site;
     </select>
+    <select id="countAll"  resultType="int">
+        select count(*) c from td_site
+         <include refid="searchCondition"></include>
+    </select>
     
-    <select id="query" parameterType="SiteBean" resultMap="siteMap" >
+    <select id="query"   resultMap="siteMap" >
         select *  from td_site
-        <where>
-        	<if test="siteName != null">
-        		and site_name like "%"#{siteName}"%"
+       
+        <include refid="searchCondition"></include>
+         <if test="page != null">
+        		limit #{page.beginIndex}, #{page.endIndex}
         	</if>
-        	<if test="siteUrl != null">
-        		and site_url like "%"#{siteUrl}"%"
+    </select>
+    
+     <sql id="searchCondition">
+    	 <where>
+        	<if test="query.siteName != null">
+        		and site_name like "%"#{query.siteName}"%"
         	</if>
-        	<if test="status != null">
-        		and status = #{status}
+        	<if test="query.siteUrl != null">
+        		and site_url like "%"#{query.siteUrl}"%"
+        	</if>
+        	<if test="query.status != null">
+        		and status = #{query.status}
         	</if>
         	
         </where>
-        <if test="currPage > 0">
-        		limit #{beginIndex}, #{endIndex}
-        	</if>
-    </select>
+    </sql>
     <delete id="delete" parameterType="int">
     	delete from td_site where id=#{id}
     </delete>

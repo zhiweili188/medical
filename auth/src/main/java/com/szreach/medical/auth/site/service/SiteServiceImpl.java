@@ -11,9 +11,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.szreach.medical.auth.role.bean.Role;
 import com.szreach.medical.auth.site.bean.SiteBean;
 import com.szreach.medical.auth.site.dao.SiteDao;
 import com.szreach.medical.common.base.AbstractBaseServiceImpl;
+import com.szreach.medical.common.base.BaseDao;
 import com.szreach.medical.common.base.PageBean;
 
 /**
@@ -25,67 +27,20 @@ import com.szreach.medical.common.base.PageBean;
 @Service("siteService")
 @Scope("prototype")
 @Transactional
-public class SiteServiceImpl extends AbstractBaseServiceImpl implements SiteService {
+public class SiteServiceImpl extends AbstractBaseServiceImpl<SiteBean> implements SiteService {
 
 	@Autowired
 	private SiteDao siteDao;
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.auth.site.service.SiteService#insertSite(com.szreach.mediacenter.auth.site.bean.SiteBean)
-	 */
+	
+	
 	@Override
-	public void insertSite(SiteBean site) {
-		siteDao.insertSite(site);
-
+	public BaseDao<SiteBean> getBaseDao() {
+		return siteDao;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.auth.site.service.SiteService#getSiteByID(java.lang.Integer)
-	 */
 	@Override
-	public SiteBean getSiteByID(Integer siteId) {
-		return siteDao.getSiteByID(siteId);
+	public List<SiteBean> getAll(SiteBean query) {
+		return siteDao.query(query, null);
 	}
-
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.auth.site.service.SiteService#updateSite(com.szreach.mediacenter.auth.site.bean.SiteBean)
-	 */
-	@Override
-	public void updateSite(SiteBean site) {
-		siteDao.updateSite(site);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.auth.site.service.SiteService#count()
-	 */
-	@Override
-	public int count() {
-		// TODO Auto-generated method stub
-		return siteDao.count();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.auth.site.service.SiteService#query(com.szreach.mediacenter.auth.site.bean.SiteBean)
-	 */
-	@Override
-	public List<SiteBean> query(SiteBean query) {
-		int total = siteDao.count();
-		return siteDao.query(query);
-	}
-	@Override
-	public List<SiteBean> query(SiteBean query, PageBean page) {
-		int total = siteDao.count();
-		page.setTotal(total);
-		return siteDao.query(query);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.auth.site.service.SiteService#delete(java.lang.String)
-	 */
-	@Override
-	public void delete(Integer siteId) {
-		siteDao.delete(siteId);
-
-	}
-
+	
 }

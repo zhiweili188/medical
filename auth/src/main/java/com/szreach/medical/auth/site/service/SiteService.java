@@ -16,15 +16,7 @@ import com.szreach.medical.common.base.PageBean;
  * @Date: 2015-2-4
  * @Version: 1.0
  */
-public interface SiteService extends BaseService {
-	public void insertSite(SiteBean site);
-	public SiteBean getSiteByID(Integer siteId);
-	public void updateSite(SiteBean site);
+public interface SiteService extends BaseService<SiteBean> {
 	
-	public int count();
 	
-	public List<SiteBean> query(SiteBean query);
-	public List<SiteBean> query(SiteBean query, PageBean page);
-	
-	public void delete(Integer siteId);
 }

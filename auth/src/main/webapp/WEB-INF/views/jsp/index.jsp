@@ -8,10 +8,7 @@
 		<meta http-equiv="cache-control" content="no-cache">
 		<meta http-equiv="expires" content="0">
 		<title></title>
-	    <script src="/auth/js/easyui/jquery.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
-		<link href="/auth/js/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-		<link href="/auth/js/easyui/themes/icon.css" rel="stylesheet" type="text/css" />
+	   
 <script type="text/javascript">
 var lastTabs = new Array(); 
 var currentTabTitle = "Home";

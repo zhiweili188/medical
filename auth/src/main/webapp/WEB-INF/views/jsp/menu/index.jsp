@@ -6,14 +6,8 @@
 <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Insert title here</title>
- 		<script src="/auth/js/easyui/jquery.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
-		<script src="/auth/js/jquery.serializeJson.js" type="text/javascript"></script>
-		<link href="/auth/js/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-		<link href="/auth/js/easyui/themes/icon.css" rel="stylesheet" type="text/css" />
 		
-		<script src="/auth/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
+		<script src="${ctx }/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
 		    
   <script type="text/javascript">
 	var datagrid;
@@ -33,6 +27,7 @@
 		              {field:'id', hidden:true },   
 		              {field:'menuName', title:'菜单名',  width:100, align:'center' },   
 		              {field:'menuOrder',title:'次序',width:100, align:'center'},   
+		              {field:'menuAction',title:'URL',width:100, align:'center'},
 		              {field:'menuAction',title:'URL',width:100, align:'center'}   
 		          ]],
 			toolbar:[              //工具条
@@ -123,6 +118,8 @@
 											         }
 											 });
 	        							
+	        							 $("#systemId").combobox('select',r.systemId);
+	        							
 	        						} else {
 	        							
 	        							$.messager.alert('错误', r.msg, 'error');
@@ -133,55 +130,7 @@
 			        		$.messager.alert('错误', "只能选择一个数据进行修改", 'error');
 			        	}
 			        }},
-			        ],
-			onAfterEdit:function(rowIndex, rowData, changes){
-				var inserted = datagrid.datagrid('getChanges', 'inserted');
-				var updated = datagrid.datagrid('getChanges', 'updated');
-				if (inserted.length < 1 && updated.length < 1) {
-					editRow = undefined;
-					datagrid.datagrid('unselectAll');
-					return;
-				}
-
-				var url = '';
-				if (inserted.length > 0) {
-					url = '/Test3/ModuleBeanController/addcustomer.do';
-				}
-				if (updated.length > 0) {
-					url = '/Test3/ModuleBeanController/addcustomer.do';
-				}
-
-				$.ajax({
-					url : url,
-					data : rowData,
-					dataType : 'json',
-					success : function(r) {
-						if (r.success) {
-							datagrid.datagrid('acceptChanges');
-							$.messager.show({
-								msg : r.msg,
-								title : '成功'
-							});
-							editRow = undefined;
-							datagrid.datagrid('reload');
-						} else {
-							/*datagrid.datagrid('rejectChanges');*/
-							datagrid.datagrid('beginEdit', editRow);
-							$.messager.alert('错误', r.msg, 'error');
-						}
-						datagrid.datagrid('unselectAll');
-					}
-				});
-				
-			},
-			onDblClickCell:function(rowIndex, field, value){
-				if(rowEditor==undefined)
-				{
-		        	datagrid.datagrid('beginEdit',rowIndex);
-		        	rowEditor=rowIndex;
-				}
-				
-			}
+			        ]
 		});
 		
 		 $('#dd').dialog({
@@ -288,6 +237,23 @@
 			 textField:'menuName',
 			 value:'-1'
 		 });
+		 
+		 $('#systemId').combobox({
+			 url: "/auth/site/all.do",
+			 valueField:'id',
+			 textField:'siteName',
+			   onLoadSuccess: function (data) {
+				  
+		             if (data&&data.length>0) {
+		            	 $("#systemId").combobox('select',data[0].id);
+		               
+		             } else {
+		            	 
+		            	 var defaultValue =[{"siteName": '请选择', "id": '-1'}];
+		            	 $("#systemId").combobox('loadData',defaultValue);
+		             }
+		         }
+		 });
 	}
 		
 	 function previewImage(file)
@@ -378,10 +344,18 @@
 		</div>
 
 			
-	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true"> 
+	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true">
 				    <form id="ff" method="post" action="/auth/menu/save.do" enctype="multipart/form-data">
 				    		<input type="hidden" id="id" name="id">
-				    	<table cellpadding="5">
+				    	<table cellpadding="5"  style="text-align: left;">
+				    		<tr>
+				    			<td>子系统:</td>
+				    			<td>
+				    				<select class="easyui-combobox" id="systemId" name="systemId"  style="width: 100px" >
+				    						
+				    				</select>
+				    			</td>
+				    		</tr>
 				    		<tr>
 				    			<td>菜单名:</td>
 				    			<td><input class="easyui-textbox" type="text" id="menuName"  name="menuName" data-options="required:true"></input></td>
@@ -435,8 +409,7 @@
 							</tr>
 				    	</table>
 				    </form>
-				    
-			</div>
+				   </div>
 			
 			
 		</div>
