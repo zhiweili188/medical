@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -60,8 +58,7 @@ public class UserRegisterAction extends BaseAction<UserRegister> {
 	private MailService mailService;
 	@Autowired
 	private UserActivateService userActivateService;
-	@Autowired
-	private TaskExecutor taskExecutor;
+	
 	 @Value("${activeUrl}")
 	private String activeUrl;
 	
@@ -101,7 +98,11 @@ public class UserRegisterAction extends BaseAction<UserRegister> {
 			userRegisterService.saveRegisterInfo(bean);
 			model.addAttribute(Key.DISPLAY_MESSAGE, Message.USER_REGISTER_SUCCESS.getMsgKey());
 			
-			taskExecutor.execute(new MailTask(bean));
+			Map<String, Object> data = new HashMap<String, Object>();
+			UserActivate acti =  getUserActivateService().getByID(bean.getUserId());
+			data.put("userName", bean.getUserName());
+			data.put("activeUrl", getActiveUrl()+"/valid/activate.do?userId="+bean.getUserId()+"&validCode="+acti.getValidCode());
+			getMailService().send(bean.getEmail(), "用户激活邮件", "register.ftl", data);
 			
 			return new ModelAndView("success");     
 	} 
@@ -190,26 +191,6 @@ public class UserRegisterAction extends BaseAction<UserRegister> {
 		
 	} 
 	
-	private class MailTask implements Runnable {
-		private UserRegister bean;
-		public MailTask(UserRegister reg) {
-			bean = reg;
-		}
-		@Override
-		public void run() {
-			SimpleMailMessage mailMessage = new SimpleMailMessage();
-			mailMessage.setTo(bean.getEmail());
-			mailMessage.setSubject("用户激活邮件");
-			Map<String, Object> data = new HashMap<String, Object>();
-			
-			
-			UserActivate acti =  getUserActivateService().getByID(bean.getUserId());
-			data.put("activeUrl", getActiveUrl()+"/valid/activate.do?userId="+bean.getUserId()+"&validCode="+acti.getValidCode());
-			//这里的model是给模板页面传送数据用的，在模板页面中要用freemarker的脚本语言解析这些数据
-			getMailService().send(mailMessage, "sample.ftl", data);
-			
-		}
-		
-	}
+
 	
 }

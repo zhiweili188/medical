@@ -25,8 +25,9 @@ public interface LoginUserService extends BaseService<LoginUser> {
 	
 	//public int count(LoginUser query);
 	
-	public List<LoginUser> query(LoginUser query);
+	//public List<LoginUser> query(LoginUser query);
 	//public List<LoginUser> query(LoginUser query, PageBean page);
 	
-	public void deleteMore(String loginUserIds);
+	//public void deleteMore(String loginUserIds);
+	//public void updateStatus(String loginUserIds, int status);
 }

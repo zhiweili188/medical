@@ -229,8 +229,8 @@
 		
 
 	<dependency>
-		<groupId>com.szreach.mediacenter</groupId>
-	  <artifactId>mediacenter-common</artifactId>
+		<groupId>com.szreach.medical</groupId>
+	  <artifactId>medical-common</artifactId>
 	  <version>1.0</version>
 	</dependency>
 	</dependencies>

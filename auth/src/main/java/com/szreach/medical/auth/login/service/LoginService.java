@@ -17,6 +17,6 @@ import com.szreach.medical.common.base.BaseService;
  * @Version: 1.0
  */
 public interface LoginService extends BaseService {
-	public List<MenuBean> queryMenuTree(int userId);
+	public List<MenuBean> queryMenuTree(int userId, int systemId);
 	public int checkLogin(LoginUser user, LoginUser loginUser);
 }

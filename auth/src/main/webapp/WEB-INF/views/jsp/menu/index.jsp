@@ -14,7 +14,7 @@
 	var rowEditor=undefined;
 	$(function(){
 		datagrid=$("#dg").datagrid({
-			url:"/auth/menu/list.do",//加载的URL
+			url:"${ctx}/menu/list.do",//加载的URL
 		    isField:"id",
 			pagination:true,//显示分页
 			pageSize:10,//分页大小
@@ -55,7 +55,7 @@
 			        				//alert(ids.join(','));
 			        			
 			        				$.ajax({
-			        					url : '/auth/menu/delete.do',
+			        					url : '${ctx}/menu/delete.do',
 			        					data : 'ids='+ids.join(','),
 			        					method: 'POST',
 			        					dataType : 'json',
@@ -85,7 +85,7 @@
 			        	{
 			        		//alert(rows[0].id);	
 			        		$.ajax({
-	        					url : '/auth/menu/id'+rows[0].id+'.do',
+	        					url : '${ctx}/menu/id'+rows[0].id+'.do',
 	        					data : [],
 	        					dataType : 'json',
 	        					success : function(r) {
@@ -97,11 +97,11 @@
 	        							 $('#menuLevel').combobox("setValue", r.menuLevel);
 	        							 
 	        							$("#id").val(r.id);
-	        							$("#imghead").attr("src", "/auth/"+r.menuIcon);
+	        							$("#imghead").attr("src", "${ctx}/"+r.menuIcon);
 	        							
 	        							//设置上级菜单
 	        							 $('#parentID').combobox({
-												 url: "/auth/menu/combox.do?menuLevel="+( r.menuLevel-1),
+												 url: "${ctx}/menu/combox.do?menuLevel="+( r.menuLevel-1),
 												 valueField:'id',
 												 textField:'menuName',
 												   onLoadSuccess: function (data) {
@@ -213,7 +213,7 @@
 					// return;
 			  //  }
 				 $('#parentID').combobox({
-					 url: "/auth/menu/combox.do?menuLevel="+(value-1),
+					 url: "${ctx}/menu/combox.do?menuLevel="+(value-1),
 					 valueField:'id',
 					 textField:'menuName',
 					   onLoadSuccess: function (data) {
@@ -239,7 +239,7 @@
 		 });
 		 
 		 $('#systemId').combobox({
-			 url: "/auth/site/all.do",
+			 url: "${ctx}/site/all.do",
 			 valueField:'id',
 			 textField:'siteName',
 			   onLoadSuccess: function (data) {
@@ -345,7 +345,7 @@
 
 			
 	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true">
-				    <form id="ff" method="post" action="/auth/menu/save.do" enctype="multipart/form-data">
+				    <form id="ff" method="post" action="${ctx}/menu/save.do" enctype="multipart/form-data">
 				    		<input type="hidden" id="id" name="id">
 				    	<table cellpadding="5"  style="text-align: left;">
 				    		<tr>

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -37,25 +38,6 @@ public class RoleAction extends BaseAction<Role> {
 	@Autowired
 	private RoleService roleService;
 	
-	/*@RequestMapping(value="/index.do")
-	public ModelAndView index() {
-		return new ModelAndView("/role/index");
-	}*/
-	
-	/*@RequestMapping(value="/list.do", produces={"application/json;charset=utf-8"})
-	@ResponseBody
-	public String  list(Role query,  @RequestParam("page") int pageNumber,  @RequestParam("rows") int pageSize, Model model) {
-		PageBean page = new PageBean();
-		page.setCurrPage(pageNumber);
-		page.setPageSize(pageSize);
-		
-		List<Role> list = roleService.query(query, page);
-		Gson gson = new Gson();
-		String json = gson.toJson(list);
-		json = "{\"rows\":"+json+",\"total\":"+page.getTotal()+"}";
-		return json;
-	}*/
-	
 	@RequestMapping(value="/all.do", produces={"application/json;charset=utf-8"})
 	@ResponseBody
 	public String  all(Role query, Model model) {
@@ -75,46 +57,19 @@ public class RoleAction extends BaseAction<Role> {
 		return json;
 	}
 	
-	/*@RequestMapping(value="/id{id}.do", produces={"application/json;charset=utf-8"})
+	@RequestMapping(value="/edit{id}.do", produces={"application/json;charset=utf-8"})
 	@ResponseBody
-	public Role getRoleById(@PathVariable("id") int id) {
-		Role role = roleService.getRoleByID(id);
+	public Role getRoleById(@PathVariable("id") int id, @RequestParam("systemId") int systemId) {
+		Role role = roleService.getRoleByID(id, systemId);
 		return role;
-	}*/
-	
-	/*@RequestMapping("/save.do")
-	@ResponseBody
-	public String save(Role model) throws Exception {
-		if(model.getId() == null){
-			roleService.insertRole(model);
-		} else {
-			roleService.updateRole(model);
-		}
-		return "success";
-	}*/
-	
-	/*@RequestMapping("/delete.do")
-	@ResponseBody
-	public String delete(@RequestParam("ids") int id) throws Exception {
-		roleService.delete(id);
-		return "success";
 	}
-*/
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.common.base.BaseAction#getService()
-	 */
 	@Override
 	public BaseService getService() {
-		// TODO Auto-generated method stub
 		return roleService;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.szreach.mediacenter.common.base.BaseAction#getPrefix()
-	 */
 	@Override
 	protected String getPrefix() {
-		// TODO Auto-generated method stub
 		return "/role";
 	}
 }

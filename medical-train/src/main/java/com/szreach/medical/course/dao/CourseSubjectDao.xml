@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.szreach.medical.course.dao.CourseSubjectDao">
+	<resultMap type="CourseSubject" id="CourseSubjectMap">
+		<id property="id" column="id"></id>
+		<result property="subjectName" column="name"></result>
+		<result property="subjectCode" column="subject_code"></result>
+		<result property="treeLevel" column="tree_level"  javaType="int" jdbcType="INTEGER"/>
+		<result property="parentId" column="parent_id"></result>
+		<result property="status" column="status"  javaType="int" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<resultMap type="CourseSubject" id="treeMap">
+		<id property="id" column="id"></id>
+		<result property="subjectName" column="name"></result>
+		<result property="childId" column="child_id"></result>
+		<result property="childName" column="child_name"></result>
+	</resultMap>
+	
+	<select id="get" parameterType="int" resultMap="CourseSubjectMap">
+		<![CDATA[ 
+		SELECT * from course_subject  WHERE id = #{id}
+		]]>
+	</select>
+	<select id="getByName" parameterType="string" resultMap="CourseSubjectMap">
+		<![CDATA[ 
+		SELECT * from course_subject  WHERE name = #{subjectName}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="CourseSubject" useGeneratedKeys="true" keyProperty="id">
+		insert into course_subject(id, name, subject_code, parent_id, status,  tree_level ) values(
+		   #{id},
+		   #{subjectName},
+		   #{subjectCode},
+		   #{parentId},
+		   0,
+		   #{treeLevel}
+		)
+	</insert>
+	<update id="update" parameterType="CourseSubject">
+		update course_subject 
+		 <set>
+		 	name=#{subjectName},  
+			 subject_code=#{subjectCode},  
+			tree_level=#{treeLevel},  parent_id=#{parentId}, 
+			<if test="status != null">
+				 status=#{status}
+			</if>
+		 </set>
+		WHERE id = #{id}
+	</update>
+	
+	<select id="countAll"  resultType="int">
+        select count(*) c from course_subject
+         <include refid="searchCondition"></include>
+    </select>
+    
+    <select id="query" resultMap="CourseSubjectMap" >
+        select *  from course_subject
+        <include refid="searchCondition"></include>
+         <if test="page != null">
+        		limit #{page.beginIndex}, #{page.endIndex}
+        	</if>
+    </select>
+    
+    <sql id="searchCondition">
+    	<where>
+        	<if test="query.subjectName != null">
+        		and name like "%"#{query.subjectName}"%"
+        	</if>
+        	<if test="query.subjectCode != null">
+        		and subject_code like "%"#{query.subjectCode}"%"
+        	</if>
+        	<if test="query.treeLevel != null">
+        		and tree_level = #{query.treeLevel}
+        	</if>
+        	<if test="query.parentId != null">
+        		and parent_id = #{query.parentId}
+        	</if>
+        	<if test="query.status != null">
+        		and status = #{query.status}
+        	</if>
+        	
+        </where>
+    </sql>
+    
+    <update id="delete"  parameterType="int" >
+			update course_subject set status=9 where id=#{id}
+	</update>
+	
+	  <select id="queryTree" resultMap="treeMap" >
+       SELECT t.id, t.name,t2.id child_id,t2.name child_name from course_subject t
+       INNER JOIN course_subject t2 on t.id=t2.parent_id
+       where t.parent_id=-1 and  t.status=0
+ 	ORDER BY t.id,t2.id
+       
+    </select>
+</mapper> 

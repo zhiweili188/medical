@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.szreach.medical.coursetype.dao.CourseTypeDao">
+	<resultMap type="CourseType" id="CourseTypeMap">
+		<id property="id" column="id"></id>
+		<result property="name" column="name"  />
+		<result property="status" column="status"></result>
+	</resultMap>
+	
+	
+	<select id="get" parameterType="int" resultMap="CourseTypeMap">
+		<![CDATA[ 
+		SELECT * from course_type  WHERE id = #{id}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="CourseType" useGeneratedKeys="true" keyProperty="id">
+		insert into course_type(id, name, status ) values(
+		   #{id},
+		   #{name},
+		   0
+		)
+	</insert>
+	<update id="update" parameterType="CourseType">
+		update course_type 
+		 <set>
+			 name=#{name}
+		 </set>
+		WHERE id = #{id}
+	</update>
+	
+	<select id="countAll"  resultType="int">
+        select count(*) c from course_type
+         <include refid="searchCondition"></include>
+    </select>
+    
+    <select id="query" resultMap="CourseTypeMap" >
+        select *  from course_type
+        <include refid="searchCondition"></include>
+         <if test="page != null">
+        		limit #{page.beginIndex}, #{page.endIndex}
+        	</if>
+    </select>
+    
+    <sql id="searchCondition">
+    	<where>
+        	<if test="query.name != null">
+        		and name like "%"#{query.name}"%"
+        	</if>
+        	<if test="query.status != null">
+        		and status = #{query.status}
+        	</if>
+        	
+        </where>
+    </sql>
+    
+    <update id="delete"  parameterType="int" >
+			update course_type set status=9 where id=#{id}
+	</update>
+	
+	<update id="batchUpdateStatus" >
+		<foreach collection="list" item="id" index="idx"  open="" close=";" separator=";">
+			update course_type set status=${status} where id=${id}
+		</foreach>
+	</update>
+	<update id="updateStatus" >
+			update course_type set status=${status} where id=#{id}
+	</update>
+	
+</mapper> 

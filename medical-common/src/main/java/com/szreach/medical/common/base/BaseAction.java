@@ -72,19 +72,39 @@ public  class BaseAction<T extends Persistentable> {
 	
 	@RequestMapping("/save.do")
 	@ResponseBody
-	public String save(T model) throws Exception {
-		if(model.getId() == null){
-			getService().insert(model);
+	public int save(T model) throws Exception {
+		int result =  getService().validate(model);
+		if(result != 0) {
+			return result;
 		} else {
-			getService().update(model);
+			if(model.getId() == null){
+				getService().insert(model);
+			} else {
+				getService().update(model);
+			}
+			return 0;
 		}
-		return "success";
 	}
 	
 	@RequestMapping("/delete.do")
 	@ResponseBody
-	public void delete(@RequestParam("id") int id) {
+	public String delete(@RequestParam("id") int id) {
 		 getService().delete(id);
+		 return "success";
+	}
+	
+	@RequestMapping("/updateStatus.do")
+	@ResponseBody
+	public String updateStatus(@RequestParam("ids") String ids, @RequestParam("status") int status) throws Exception {
+		getService().updateStatus(ids, status);
+		return "success";
+	}
+	
+	@RequestMapping("/deleteMore.do")
+	@ResponseBody
+	public String delete(@RequestParam("ids") String ids) throws Exception {
+		getService().deleteMore(ids);
+		return "success";
 	}
 	
 	public  String getMessage(String msgKey) {

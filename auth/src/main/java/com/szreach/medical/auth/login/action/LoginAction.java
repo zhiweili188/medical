@@ -6,6 +6,7 @@ package com.szreach.medical.auth.login.action;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.szreach.medical.auth.login.service.LoginService;
 import com.szreach.medical.auth.menu.bean.MenuBean;
+import com.szreach.medical.auth.site.bean.SiteBean;
+import com.szreach.medical.auth.site.service.SiteService;
 import com.szreach.medical.auth.st.Key;
 import com.szreach.medical.auth.st.ReturnCode;
 import com.szreach.medical.auth.st.ReturnObject;
@@ -48,6 +51,8 @@ public class LoginAction extends BaseAction {
 	private LoginService loginService;
 	@Autowired
 	private LoginUserService loginUserService;
+	@Autowired
+	private SiteService siteService;
 	
 	@SkipLogin(value=true)
 	@RequestMapping(value="/tologin.do")
@@ -78,7 +83,7 @@ public class LoginAction extends BaseAction {
 		return new ResponseEntity<ReturnObject>(returnObject, headers, HttpStatus.OK);
 	}
 	@RequestMapping(value="/main.do")
-	public ModelAndView index( Model model, HttpSession session) {
+	public ModelAndView index( Model model, HttpSession session, HttpServletRequest request) {
 		logger.debug("----index--------");
 		
 		LoginUser loginUser = (LoginUser)session.getAttribute(Key.SESSION_LOGIN_USER);
@@ -86,8 +91,14 @@ public class LoginAction extends BaseAction {
 		if(loginUser == null) {
 			return new ModelAndView("redirect:/login/tologin.do");     
 		} else {
-			List<MenuBean> treeList = loginService.queryMenuTree(loginUser.getId());
-			model.addAttribute("menuList", treeList);
+			String ctx = request.getContextPath();
+			String url = "http://"+request.getHeader("host") + ctx;
+			SiteBean site = siteService.getByUrl(url);
+			if(site != null) {
+				
+				List<MenuBean> treeList = loginService.queryMenuTree(loginUser.getId(), site.getId());
+				model.addAttribute("menuList", treeList);
+			}
 		}
 		
 		return new ModelAndView("/index");     
@@ -105,7 +116,7 @@ public class LoginAction extends BaseAction {
 			model.addAttribute("msgCode", result);
 			return new ModelAndView("/error");     
 		} else {
-			List<MenuBean> treeList = loginService.queryMenuTree(loginUser.getId());
+			List<MenuBean> treeList = loginService.queryMenuTree(loginUser.getId(),20);
 			model.addAttribute("menuList", treeList);
 		}
 		

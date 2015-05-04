@@ -18,6 +18,7 @@ public class Role extends Persistentable {
 	private Integer roleStatus;
 	private Integer isSys;
 	
+	private Integer systemId;
 	private String privileges;
 	
 	public String getRoleName() {
@@ -45,7 +46,12 @@ public class Role extends Persistentable {
 	public void setPrivileges(String privileges) {
 		this.privileges = privileges;
 	}
-	
+	public Integer getSystemId() {
+		return systemId;
+	}
+	public void setSystemId(Integer systemId) {
+		this.systemId = systemId;
+	}
 	
 	
 }

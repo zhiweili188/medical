@@ -14,6 +14,6 @@ import com.szreach.medical.common.base.BaseDao;
  * @Version: 1.0
  */
 public interface SiteDao extends BaseDao<SiteBean> {
-	
+	public SiteBean getByUrl(String url);
 	
 }

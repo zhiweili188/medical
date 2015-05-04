@@ -6,21 +6,15 @@
 <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Insert title here</title>
- <script src="/auth/js/easyui/jquery.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
-		<script src="/auth/js/jquery.serializeJson.js" type="text/javascript"></script>
-		<link href="/auth/js/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-		<link href="/auth/js/easyui/themes/icon.css" rel="stylesheet" type="text/css" />
 		
-		<script src="/auth/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
+		<script src="${ctx}/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
 		    
   <script type="text/javascript">
 	var datagrid;
 	var rowEditor=undefined;
 	$(function(){
 		datagrid=$("#dg").datagrid({
-			url:"/auth/user/list.do",//加载的URL
+			url:"${ctx}/user/list.do",//加载的URL
 		    isField:"id",
 			pagination:true,//显示分页
 			pageSize:15,//分页大小
@@ -58,57 +52,7 @@
 			        	
 			        	 $('#dd').dialog('open');
 			        }},
-			        {text:"删除",iconCls:"icon-remove",handler:function(){
-			        	var rows=datagrid.datagrid('getSelections');
-			  
-			        	if(rows.length<=0)
-			        	{
-			        		$.messager.alert('警告','您没有选择','error');
-			        	}
-			        	else
-			        	{
-			        		var rows = datagrid.datagrid('getSelections');
-			        		for(var i=0; i<rows.length; i++){
-	        					if(rows[i].userType == 1){
-	        						$.messager.alert('错误', "不能删除系统用户", 'error');
-				        			return;
-	        					}
-	        				}
-			        		$.messager.confirm('确定','您确定要删除吗',function(t){
-			        			if(t)
-			        			{
-			        				var ids = [];
-			        				var rows = datagrid.datagrid('getSelections');
-			        				for(var i=0; i<rows.length; i++){
-			        					ids.push(rows[i].id);
-			        				}
-			        				//alert(ids.join(','));
-			        			
-			        				$.ajax({
-			        					url : '/auth/user/deleteMore.do',
-			        					data : 'ids='+ids.join(','),
-			        					method: 'POST',
-			        					dataType : 'json',
-			        					success : function(r) {
-			        						if (r.success) {
-			        							$.messager.show({
-			        								msg : r.msg,
-			        								title : '成功'
-			        							});
-			        							datagrid.datagrid('reload');
-			        						} else {
-			        							$.messager.alert('错误', r.msg, 'error');
-			        						}
-			        						datagrid.datagrid('unselectAll');
-			        					}
-			        				});
-			        			
-			        			}
-			        		})
-			        	}
-			        	
-			        	
-			        }},
+			       
 			        {text:"修改",iconCls:"icon-edit",handler:function(){
 			        	var rows=datagrid.datagrid('getSelections');
 			        	if(rows.length==1)
@@ -119,7 +63,7 @@
 			        		}
 			        		//alert(rows[0].id);	
 			        		$.ajax({
-	        					url : '/auth/user/id'+rows[0].id+'.do',
+	        					url : '${ctx}/user/id'+rows[0].id+'.do',
 	        					data : [],
 	        					dataType : 'json',
 	        					success : function(r) {
@@ -137,7 +81,7 @@
 	        				});
 			        		
 			        		$.ajax({
-			        			url : "/auth/userrole/"+rows[0].id+'.do',
+			        			url : "${ctx}/userrole/"+rows[0].id+'.do',
 			        			dataType : 'json',
 			        			success : function(r) {
 			        				 var html = "";
@@ -163,56 +107,111 @@
 			        {text:"修改密码",iconCls:"icon-redo",handler:function(){
 			        	 $('#ddPwd').dialog("open");
 			        	
+			        }},
+			        {text:"启用",iconCls:"icon-remove",handler:function(){
+			        	var rows=datagrid.datagrid('getSelections');
+			  
+			        	if(rows.length<=0)
+			        	{
+			        		$.messager.alert('警告','您没有选择','error');
+			        	}
+			        	else
+			        	{
+			        		var rows = datagrid.datagrid('getSelections');
+			        		for(var i=0; i<rows.length; i++){
+	        					if(rows[i].userType == 1){
+	        						$.messager.alert('错误', "不能操作系统用户", 'error');
+				        			return;
+	        					}
+	        				}
+			        		$.messager.confirm('确定','您确定要启用吗',function(t){
+			        			if(t)
+			        			{
+			        				var ids = [];
+			        				var rows = datagrid.datagrid('getSelections');
+			        				for(var i=0; i<rows.length; i++){
+			        					ids.push(rows[i].id);
+			        				}
+			        				//alert(ids.join(','));
+			        			
+			        				$.ajax({
+			        					url : '${ctx}/user/updateStatus.do',
+			        					data : 'status=0&ids='+ids.join(','),
+			        					method: 'POST',
+			        					dataType : 'json',
+			        					success : function(r) {
+			        						if (r.success) {
+			        							$.messager.show({
+			        								msg : r.msg,
+			        								title : '成功'
+			        							});
+			        							datagrid.datagrid('reload');
+			        						} else {
+			        							$.messager.alert('错误', r.msg, 'error');
+			        						}
+			        						datagrid.datagrid('unselectAll');
+			        					}
+			        				});
+			        			
+			        			}
+			        		})
+			        	}
+			        	
+			        	
+			        }},
+			        {text:"停用",iconCls:"icon-remove",handler:function(){
+			        	var rows=datagrid.datagrid('getSelections');
+			  
+			        	if(rows.length<=0)
+			        	{
+			        		$.messager.alert('警告','您没有选择','error');
+			        	}
+			        	else
+			        	{
+			        		var rows = datagrid.datagrid('getSelections');
+			        		for(var i=0; i<rows.length; i++){
+	        					if(rows[i].userType == 1){
+	        						$.messager.alert('错误', "不能操作系统用户", 'error');
+				        			return;
+	        					}
+	        				}
+			        		$.messager.confirm('确定','您确定要停用吗',function(t){
+			        			if(t)
+			        			{
+			        				var ids = [];
+			        				var rows = datagrid.datagrid('getSelections');
+			        				for(var i=0; i<rows.length; i++){
+			        					ids.push(rows[i].id);
+			        				}
+			        				//alert(ids.join(','));
+			        			
+			        				$.ajax({
+			        					url : '${ctx}/user/updateStatus.do',
+			        					data : 'status=9&ids='+ids.join(','),
+			        					method: 'POST',
+			        					dataType : 'json',
+			        					success : function(r) {
+			        						if (r.success) {
+			        							$.messager.show({
+			        								msg : r.msg,
+			        								title : '成功'
+			        							});
+			        							datagrid.datagrid('reload');
+			        						} else {
+			        							$.messager.alert('错误', r.msg, 'error');
+			        						}
+			        						datagrid.datagrid('unselectAll');
+			        					}
+			        				});
+			        			
+			        			}
+			        		})
+			        	}
+			        	
+			        	
 			        }}
 			        ],
-			onAfterEdit:function(rowIndex, rowData, changes){
-				var inserted = datagrid.datagrid('getChanges', 'inserted');
-				var updated = datagrid.datagrid('getChanges', 'updated');
-				if (inserted.length < 1 && updated.length < 1) {
-					editRow = undefined;
-					datagrid.datagrid('unselectAll');
-					return;
-				}
-
-				var url = '';
-				if (inserted.length > 0) {
-					url = '/Test3/ModuleBeanController/addcustomer.do';
-				}
-				if (updated.length > 0) {
-					url = '/Test3/ModuleBeanController/addcustomer.do';
-				}
-
-				$.ajax({
-					url : url,
-					data : rowData,
-					dataType : 'json',
-					success : function(r) {
-						if (r.success) {
-							datagrid.datagrid('acceptChanges');
-							$.messager.show({
-								msg : r.msg,
-								title : '成功'
-							});
-							editRow = undefined;
-							datagrid.datagrid('reload');
-						} else {
-							/*datagrid.datagrid('rejectChanges');*/
-							datagrid.datagrid('beginEdit', editRow);
-							$.messager.alert('错误', r.msg, 'error');
-						}
-						datagrid.datagrid('unselectAll');
-					}
-				});
-				
-			},
-			onDblClickCell:function(rowIndex, field, value){
-				if(rowEditor==undefined)
-				{
-		        	datagrid.datagrid('beginEdit',rowIndex);
-		        	rowEditor=rowIndex;
-				}
-				
-			}
+			
 		});
 		
 		 $('#dd').dialog({
@@ -312,9 +311,9 @@
     		runtimes : 'html5,flash,silverlight,html4',
     		browse_button : 'pickfiles', // you can pass in id...
     		container: document.getElementById('container'), // ... or DOM Element itself
-    		url : '/auth/user/upload.do',
-    		flash_swf_url : '/auth/js/plupload-2.1.2/js/Moxie.swf',
-    		silverlight_xap_url : '/auth/js/plupload-2.1.2/js/Moxie.xap',
+    		url : '${ctx}/user/upload.do',
+    		flash_swf_url : '${ctx}/js/plupload-2.1.2/js/Moxie.swf',
+    		silverlight_xap_url : '${ctx}/js/plupload-2.1.2/js/Moxie.xap',
     		
     		multi_selection: false,
     		multiple_queues: false,
@@ -500,7 +499,7 @@ var log = document.getElementById('console');
 
 			
 	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true"> 
-				    <form id="ff" method="post" action="/auth/user/save.do">
+				    <form id="ff" method="post" action="${ctx}/user/save.do">
 				    		<input type="hidden" id="id" name="id">
 				    		<input type="hidden" id="roleIds" name="roleIds">
 				    	<table cellpadding="5">
@@ -550,7 +549,7 @@ var log = document.getElementById('console');
 				    
 			</div>
 			<div id="ddPwd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true"> 
-				    <form id="setPwdForm" method="post" action="/auth/user/updatePwd.do">
+				    <form id="setPwdForm" method="post" action="${ctx}/user/updatePwd.do">
 				    	<input type="hidden" id="idPwd" name="id">
 				    	<table cellpadding="5">
 				    		<tr>
@@ -618,7 +617,7 @@ $(function(){
 
 function getRole(userId){
 	$.ajax({
-		url : "/auth/role/choose"+userId+".do",
+		url : "${ctx}/role/choose"+userId+".do",
 		dataType : 'json',
 		success : function(r) {
 			 var html = "";

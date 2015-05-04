@@ -4,6 +4,7 @@
  */
 package com.szreach.medical.common.base;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,5 +63,34 @@ public abstract class AbstractBaseServiceImpl<T extends Persistentable> implemen
 		getBaseDao().delete(id);
 		
 	}
+	
+	public void deleteMore(String toDeleteIds){
+		String[] ids = toDeleteIds.split(",");
+		if(ids.length == 1) {
+			getBaseDao().delete(Integer.valueOf(ids[0]));
+		} else {
+			List<Integer> list = new ArrayList<Integer>(ids.length);
+			for(String id : ids) {
+				list.add(Integer.valueOf(id));
+			}
+			getBaseDao().batchDel(list);
+		}
+	}
+	
+	public void updateStatus(String tids, int status){
+		String[] ids = tids.split(",");
+		if(ids.length == 1) {
+			getBaseDao().updateStatus(Integer.valueOf(ids[0]), status);
+		} else {
+			List<Integer> list = new ArrayList<Integer>(ids.length);
+			for(String id : ids) {
+				list.add(Integer.valueOf(id));
+			}
+			getBaseDao().batchUpdateStatus(list, status);
+		}
+	}
 
+	public int validate(T t) {
+		return 1;
+	}
 }

@@ -17,7 +17,7 @@ import com.szreach.medical.common.base.BaseService;
  */
 public interface RoleService extends BaseService<Role> {
 	//public void insertRole(Role role);
-	//public Role getRoleByID(Integer roleId);
+	public Role getRoleByID(Integer roleId, Integer systemId);
 	//public void updateRole(Role role);
 	
 	//public int count(Role query);

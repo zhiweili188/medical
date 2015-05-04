@@ -122,18 +122,18 @@
 				<!--默认的编码方式 -->  
 	            <property name="defaultEncoding" value="UTF-8"/>  
 				<!--邮箱服务器的主机地址 -->  
-	            <property name="host" value="smtp.126.com"/>  
+	            <property name="host" value="${mail.smtp.host}"/>  
 				<!--服务器的端口号 -->  
-	            <property name="port" value="25"/>  
+	            <property name="port" value="${mail.smtp.port}"/>  
 				<!--连接服务器的用户名 也就是你的QQ邮箱的地址名例如xxx@qq.com-->  
-	            <property name="username" value="zhiweili188@126.com"/>  
+	            <property name="username" value="${mail.smtp.username}"/>  
 				<!--密码 就是你登陆邮箱的密码 -->  
-	            <property name="password" value="Zhiweili19831209"/>  
+	            <property name="password" value="${mail.smtp.passwd}"/>  
 				<!--下面就是smtp的一些设置-->  
 	            <property name="javaMailProperties">  
 	            <props>  
 				<!--设置自动登录-->  
-	             <prop key="mail.smtp.auth">true</prop>  
+	             <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>  
 				<!-- 设置端口的进入优先命令状态-->  
 	        	<prop key="mail.smtp.starttls.enable">false</prop>  
 	             </props>  
@@ -153,14 +153,15 @@
 	<bean id="mailService" class="com.szreach.medical.mail.service.MailServiceImpl">
 		<property name="freeMarkerConfigurer" ref="freeMarkerConfigurer" />
 		<property name="mailSender" ref="mailSender" />
-		<property name="emailFrom" value="zhiweili188@126.com" />
-		<property name="fromDisplayName" value="test" />
-		<property name="replyTo" value="364618965@qq.com" />
+		<property name="emailFrom" value="${mail.smtp.username}" />
+		<property name="fromDisplayName" value="通知邮件" />
+		<property name="taskExecutor"  ref="taskExecutor"/>
+		<!-- <property name="replyTo" value="364618965@qq.com" />  -->
 	</bean>
 	
 	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		<property name="corePoolSize" value="10"/>
-		<property name="maxPoolSize" value="30"/>
+		<property name="corePoolSize" value="2"/>
+		<property name="maxPoolSize" value="10"/>
 	</bean>
 	
 	<bean id="viewResolver"

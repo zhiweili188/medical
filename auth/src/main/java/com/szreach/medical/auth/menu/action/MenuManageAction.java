@@ -128,9 +128,9 @@ public class MenuManageAction extends BaseAction<MenuBean> {
 	
 	@RequestMapping(value="/tree.do")
 	@ResponseBody
-	public String  list() {
+	public String  list(@RequestParam("systemId") int systemId) {
 		
-		List<MenuBean> list = menuService.queryTree();
+		List<MenuBean> list = menuService.queryTree(systemId);
 		Gson gson = new Gson();
 		String json = gson.toJson(list);
 		return json;

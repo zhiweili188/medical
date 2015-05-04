@@ -6,21 +6,13 @@
 <head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Insert title here</title>
- 		<script src="/auth/js/easyui/jquery.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
-		<script src="/auth/js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
-		<script src="/auth/js/jquery.serializeJson.js" type="text/javascript"></script>
-		<link href="/auth/js/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-		<link href="/auth/js/easyui/themes/icon.css" rel="stylesheet" type="text/css" />
-		
-		<script src="/auth/js/plupload-2.1.2/js/plupload.full.min.js" type="text/javascript"></script>
 		    
   <script type="text/javascript">
 	var datagrid;
 	var rowEditor=undefined;
 	$(function(){
 		datagrid=$("#dg").datagrid({
-			url:"/auth/room/list.do",//加载的URL
+			url:"${ctx}/room/list.do",//加载的URL
 		    isField:"id",
 			pagination:true,//显示分页
 			pageSize:10,//分页大小
@@ -68,7 +60,7 @@
 			        				//alert(ids.join(','));
 			        			
 			        				$.ajax({
-			        					url : '/auth/room/delete.do',
+			        					url : '${ctx}/room/delete.do',
 			        					data : 'ids='+ids.join(','),
 			        					method: 'POST',
 			        					dataType : 'json',
@@ -102,7 +94,7 @@
 			        		}*/
 			        		//alert(rows[0].id);	
 			        		$.ajax({
-	        					url : '/auth/room/id'+rows[0].id+'.do',
+	        					url : '${ctx}/room/id'+rows[0].id+'.do',
 	        					data : [],
 	        					dataType : 'json',
 	        					success : function(r) {
@@ -206,7 +198,7 @@
 
 			
 	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true"> 
-				    <form id="ff" method="post" action="/auth/room/save.do" >
+				    <form id="ff" method="post" action="${ctx}/room/save.do" >
 				    		<input type="hidden" id="id" name="id">
 						<table cellpadding="5">
 				    		<tr>

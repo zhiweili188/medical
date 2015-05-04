@@ -15,6 +15,7 @@ import com.szreach.medical.common.base.Persistentable;
 public class Privilege extends Persistentable {
 	private Integer roleId;
 	private Integer menuId;
+	private Integer systemId;
 	public Integer getRoleId() {
 		return roleId;
 	}
@@ -26,6 +27,12 @@ public class Privilege extends Persistentable {
 	}
 	public void setMenuId(Integer menuId) {
 		this.menuId = menuId;
+	}
+	public Integer getSystemId() {
+		return systemId;
+	}
+	public void setSystemId(Integer systemId) {
+		this.systemId = systemId;
 	}
 	
 }

@@ -43,4 +43,7 @@ public class SiteServiceImpl extends AbstractBaseServiceImpl<SiteBean> implement
 		return siteDao.query(query, null);
 	}
 	
+	public SiteBean getByUrl(String url) {
+		return siteDao.getByUrl(url);
+	}
 }

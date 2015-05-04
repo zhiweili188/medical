@@ -82,6 +82,12 @@ public class UserAction  extends BaseAction<LoginUser> {
 		loginUserService.updatePwd(model);
 		return "success";
 	}
+	@RequestMapping("/updateStatus.do")
+	@ResponseBody
+	public String updateStatus(@RequestParam("ids") String ids, @RequestParam("status") int status) throws Exception {
+		loginUserService.updateStatus(ids, status);
+		return "success";
+	}
 	@RequestMapping("/deleteMore.do")
 	@ResponseBody
 	public String delete(@RequestParam("ids") String ids) throws Exception {

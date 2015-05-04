@@ -10,6 +10,7 @@
 	<resultMap type="com.szreach.medical.auth.role.bean.Privilege" id="PrivilegeMap">
 		<id property="roleId" column="role_id"></id>
 		<result property="menuId" column="menu_id"></result>
+		<result property="systemId" column="system_id"></result>
 	</resultMap>
 	
 	<select id="get" parameterType="int" resultMap="RoleMap">
@@ -18,11 +19,11 @@
 		]]>
 	</select>
 	
-	<select id="getPrivilege" parameterType="int" resultMap="PrivilegeMap">
-		SELECT * from td_privilege where role_id=#{id}
+	<select id="getPrivilege" resultMap="PrivilegeMap">
+		SELECT * from td_privilege where role_id=#{roleId} and system_id=#{systemId}
 	</select>
-	<delete id="deletePrivilege" parameterType="int" >
-		delete from td_privilege where role_id=#{id}
+	<delete id="deletePrivilege" >
+		delete from td_privilege where role_id=#{roleId} and system_id=#{systemId}
 	</delete>
 	
 	<insert id="insert" parameterType="Role" useGeneratedKeys="true" keyProperty="id">
@@ -35,7 +36,7 @@
 	</insert>
 	<insert id="insertPrivilege" >
 		<foreach collection="list" item="id" index="idx"  open="" close=";" separator=";">
-			insert into td_privilege(role_id, menu_id) values(#{roleId}, #{id})
+			insert into td_privilege(role_id, menu_id, system_id) values(#{roleId}, #{id}, #{systemId})
 		</foreach>
 		
 	</insert>
@@ -73,10 +74,20 @@
 			update td_role set role_status=9 where id=#{id}
 	</update>
 	
+	<update id="batchUpdateStatus" >
+		<foreach collection="list" item="id" index="idx"  open="" close=";" separator=";">
+			update td_role set role_status=${status} where id=${id}
+		</foreach>
+	</update>
+	<update id="updateStatus" >
+			update td_role set role_status=${status} where id=#{id}
+	</update>
+	
 	<select id="getChoosableRoles" parameterType="int"  resultMap="RoleMap" >
 		SELECT a.* from td_role a
 		LEFT JOIN(
 		SELECT b.* from td_user_role a
-		JOIN td_role b on a.role_id=b.id where user_id=#{userId}) b on a.id=b.id where b.id is null
+		JOIN td_role b on a.role_id=b.id where user_id=#{userId}) b on a.id=b.id 
+		where b.id is null and a.role_status=0
 	</select>
 </mapper> 

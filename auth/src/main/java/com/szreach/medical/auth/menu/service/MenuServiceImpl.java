@@ -79,8 +79,8 @@ public class MenuServiceImpl  extends AbstractBaseServiceImpl<MenuBean> implemen
 		return list;
 	}
 	
-	public List<MenuBean> queryTree() {
-		List<MenuBean> list = menuDao.queryTree();
+	public List<MenuBean> queryTree(int systemId) {
+		List<MenuBean> list = menuDao.queryTree(systemId);
 		if(list == null || list.size()==0) return null;
 		List<MenuBean> treeList = new ArrayList<MenuBean>();
 		

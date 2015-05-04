@@ -35,8 +35,8 @@ public class LoginServiceImpl extends AbstractBaseServiceImpl implements LoginSe
 	private LoginUserDao loginUserDao;
 	
 	@Override
-	public List<MenuBean> queryMenuTree(int userId) {
-		List<MenuBean> list = loginDao.queryMenuTree(userId);
+	public List<MenuBean> queryMenuTree(int userId,  int systemId) {
+		List<MenuBean> list = loginDao.queryMenuTree(userId, systemId);
 		if(list == null || list.size()==0) return null;
 		List<MenuBean> treeList = new ArrayList<MenuBean>();
 		
@@ -79,11 +79,14 @@ public class LoginServiceImpl extends AbstractBaseServiceImpl implements LoginSe
 
 	public int checkLogin(LoginUser user, LoginUser loginUser) {
 		int result = ReturnCode.SUCCESS;
-		//1.检查用户名是否存在
+		//检查用户名是否存在
 		if(loginUser == null) {
 			result = ReturnCode.USERNAME_PASSW_ERROR;
 		} else {
-			//2.检查密码是否正确
+			if(  loginUser.getStatus() ==9){
+				result = ReturnCode.USER_STATUS_9_ERROR;
+			} else
+			//检查密码是否正确
 			if( ! loginUser.getPassword().equals(user.getPassword())) {
 				result = ReturnCode.USERNAME_PASSW_ERROR;
 			} else {

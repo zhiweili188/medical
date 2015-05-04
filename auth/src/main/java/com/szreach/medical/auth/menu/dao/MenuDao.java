@@ -18,6 +18,6 @@ import com.szreach.medical.common.base.BaseDao;
 public interface MenuDao  extends BaseDao<MenuBean>{
 	//public int countAll(@Param("query") MenuBean query);
 	//public List<MenuBean> query(@Param("query") MenuBean query, @Param("page")  PageBean page);
-	public List<MenuBean> queryTree();
+	public List<MenuBean> queryTree(int systemId);
 	
 }

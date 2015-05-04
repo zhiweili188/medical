@@ -4,11 +4,8 @@
  */
 package com.szreach.medical.auth.site.service;
 
-import java.util.List;
-
 import com.szreach.medical.auth.site.bean.SiteBean;
 import com.szreach.medical.common.base.BaseService;
-import com.szreach.medical.common.base.PageBean;
 
 /**
  * @Description:
@@ -18,5 +15,5 @@ import com.szreach.medical.common.base.PageBean;
  */
 public interface SiteService extends BaseService<SiteBean> {
 	
-	
+	public SiteBean getByUrl(String url);
 }

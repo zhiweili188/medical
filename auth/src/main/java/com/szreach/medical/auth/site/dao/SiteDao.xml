@@ -12,6 +12,11 @@
 		SELECT * from td_site  WHERE id = #{id}
 		]]>
 	</select>
+	<select id="getByUrl" parameterType="string" resultMap="siteMap">
+		<![CDATA[ 
+		SELECT * from td_site  WHERE site_url = #{url}
+		]]>
+	</select>
 	
 	<insert id="insert" parameterType="SiteBean" useGeneratedKeys="true" keyProperty="id">
 		insert into td_site(id, site_name, site_url,status) values(

@@ -1,0 +1,38 @@
+/**
+ * Copyright (c) @2015-3-25. All Rights Reserved.
+ * AUTHOR: LIZHIWEI</a>
+ */
+package com.szreach.medical.auth.role.bean;
+
+import com.szreach.medical.common.base.Persistentable;
+
+/**
+ * @Description:
+ * @author lizhiwei
+ * @Date: 2015-3-25
+ * @Version: 1.0
+ */
+public class Privilege extends Persistentable {
+	private Integer roleId;
+	private Integer menuId;
+	private Integer systemId;
+	public Integer getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
+	public Integer getMenuId() {
+		return menuId;
+	}
+	public void setMenuId(Integer menuId) {
+		this.menuId = menuId;
+	}
+	public Integer getSystemId() {
+		return systemId;
+	}
+	public void setSystemId(Integer systemId) {
+		this.systemId = systemId;
+	}
+	
+}

@@ -6,6 +6,8 @@ package com.szreach.medical.auth.user.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.szreach.medical.auth.user.bean.LoginUser;
 import com.szreach.medical.common.base.BaseDao;
 
@@ -21,5 +23,7 @@ public interface LoginUserDao extends BaseDao<LoginUser> {
 	//public List<LoginUser> query(@Param("query") LoginUser query, @Param("page")  PageBean page);
 	public void updatePwd(LoginUser user);
 	public void batchDel(List<Integer> idList);
+	public void batchUpdateStatus(@Param("list")List<Integer> idList, @Param("status")int status);
+	public void updateStatus(@Param("id")int id, @Param("status") int status);
 	public LoginUser getByUserName(String userName);
 }

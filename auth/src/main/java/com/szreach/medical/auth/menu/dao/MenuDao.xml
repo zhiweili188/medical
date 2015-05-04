@@ -98,9 +98,11 @@
 	</update>
 	
 	  <select id="queryTree" resultMap="treeMap" >
-       SELECT t.id, t.menu_name,t2.id child_id,t2.menu_name child_menu_name from td_menu t
-       LEFT JOIN td_menu t2 on t.id=t2.parent_id
-       where t.parent_id=-1 and  t.menu_status=0 ORDER BY t.parent_id,t.menu_order
+       SELECT t.id, t.menu_name,t2.id child_id,t2.menu_name child_menu_name,t.system_id from td_menu t
+       INNER JOIN td_menu t2 on t.id=t2.parent_id
+       where t.parent_id=-1 and  t.menu_status=0
+			and t.system_id=#{systemId}
+ 	ORDER BY t.menu_order,t2.menu_order
        
     </select>
 </mapper> 

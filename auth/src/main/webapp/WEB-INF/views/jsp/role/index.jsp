@@ -12,7 +12,7 @@
 	var rowEditor=undefined;
 	$(function(){
 		datagrid=$("#dg").datagrid({
-			url:"/auth/role/list.do",//加载的URL
+			url:"${ctx}/role/list.do",//加载的URL
 		    isField:"id",
 			pagination:true,//显示分页
 			pageSize:10,//分页大小
@@ -48,50 +48,6 @@
 			        	
 			        	 $('#dd').dialog('open');
 			        }},
-			        {text:"删除",iconCls:"icon-remove",handler:function(){
-			        	var rows=datagrid.datagrid('getSelections');
-			  
-			        	if(rows.length<=0)
-			        	{
-			        		$.messager.alert('警告','您没有选择','error');
-			        	}
-			        	else
-			        	{
-			        		$.messager.confirm('确定','您确定要删除吗',function(t){
-			        			if(t)
-			        			{
-			        				var ids = [];
-			        				var rows = datagrid.datagrid('getSelections');
-			        				for(var i=0; i<rows.length; i++){
-			        					ids.push(rows[i].id);
-			        				}
-			        				//alert(ids.join(','));
-			        			
-			        				$.ajax({
-			        					url : '/auth/role/delete.do',
-			        					data : 'ids='+ids.join(','),
-			        					method: 'POST',
-			        					dataType : 'json',
-			        					success : function(r) {
-			        						if (r.success) {
-			        							$.messager.show({
-			        								msg : r.msg,
-			        								title : '成功'
-			        							});
-			        							datagrid.datagrid('reload');
-			        						} else {
-			        							$.messager.alert('错误', r.msg, 'error');
-			        						}
-			        						datagrid.datagrid('unselectAll');
-			        					}
-			        				});
-			        			
-			        			}
-			        		})
-			        	}
-			        	
-			        	
-			        }},
 			        {text:"修改",iconCls:"icon-edit",handler:function(){
 			        	var rows=datagrid.datagrid('getSelections');
 			        	if(rows.length==1)
@@ -101,9 +57,11 @@
 			        			return;
 			        		}*/
 			        		//alert(rows[0].id);	
+			        		 var data = $('#systemId').combobox('getData');
+			        		 var param ="systemId="+data[0].id;
 			        		$.ajax({
-	        					url : '/auth/role/id'+rows[0].id+'.do',
-	        					data : [],
+	        					url : '${ctx}/role/edit'+rows[0].id+'.do',
+	        					data : param,
 	        					dataType : 'json',
 	        					success : function(r) {
 	        						if (r.id) {
@@ -111,14 +69,7 @@
 	        							$("#roleName").textbox("setValue", r.roleName);
 	        							$("#id").val(r.id);
 	        							
-	        							var array = r.privileges.split(',');
-	        	                           for(var i=0;i<array.length;i++)  
-	        	                           {
-	        	                        	   if(array[i] != "") {
-	        	                             	  var node = $('#privilege-tree').tree('find',array[i]);  
-	        	                             	 $('#privilege-tree').tree('check',node.target);  
-	        	                        	   }
-	        	                           }  
+	        							 initTree(r.privileges);
 	        							
 	        						
 	        						} else {
@@ -131,6 +82,106 @@
 			        		$.messager.alert('错误', "只能选择一个数据进行修改", 'error');
 			        	}
 			        }},
+			        {text:"启用",iconCls:"icon-remove",handler:function(){
+			        	var rows=datagrid.datagrid('getSelections');
+			  
+			        	if(rows.length<=0)
+			        	{
+			        		$.messager.alert('警告','您没有选择','error');
+			        	}
+			        	else
+			        	{
+			        		var rows = datagrid.datagrid('getSelections');
+			        		for(var i=0; i<rows.length; i++){
+	        					if(rows[i].isSys == 1){
+	        						$.messager.alert('错误', "不能操作系统用户", 'error');
+				        			return;
+	        					}
+	        				}
+			        		$.messager.confirm('确定','您确定要启用吗',function(t){
+			        			if(t)
+			        			{
+			        				var ids = [];
+			        				var rows = datagrid.datagrid('getSelections');
+			        				for(var i=0; i<rows.length; i++){
+			        					ids.push(rows[i].id);
+			        				}
+			        				//alert(ids.join(','));
+			        			
+			        				$.ajax({
+			        					url : '${ctx}/role/updateStatus.do',
+			        					data : 'status=0&ids='+ids.join(','),
+			        					method: 'POST',
+			        					dataType : 'text',
+			        					success : function(r) {
+			        						if (r=="success") {
+			        							$.messager.show({
+			        								msg : "操作成功",
+			        								title : '成功'
+			        							});
+			        							datagrid.datagrid('reload');
+			        						} else {
+			        							$.messager.alert('错误',"操作失败", 'error');
+			        						}
+			        						datagrid.datagrid('unselectAll');
+			        					}
+			        				});
+			        			
+			        			}
+			        		})
+			        	}
+			        	
+			        	
+			        }},
+			        {text:"停用",iconCls:"icon-remove",handler:function(){
+			        	var rows=datagrid.datagrid('getSelections');
+			  
+			        	if(rows.length<=0)
+			        	{
+			        		$.messager.alert('警告','您没有选择','error');
+			        	}
+			        	else
+			        	{
+			        		var rows = datagrid.datagrid('getSelections');
+			        		for(var i=0; i<rows.length; i++){
+	        					if(rows[i].isSys == 1){
+	        						$.messager.alert('错误', "不能操作系统用户", 'error');
+				        			return;
+	        					}
+	        				}
+			        		$.messager.confirm('确定','您确定要停用吗',function(t){
+			        			if(t)
+			        			{
+			        				var ids = [];
+			        				var rows = datagrid.datagrid('getSelections');
+			        				for(var i=0; i<rows.length; i++){
+			        					ids.push(rows[i].id);
+			        				}
+			        				//alert(ids.join(','));
+			        			
+			        				$.ajax({
+			        					url : '${ctx}/role/updateStatus.do',
+			        					data : 'status=9&ids='+ids.join(','),
+			        					method: 'POST',
+			        					dataType : 'text',
+			        					success : function(r) {
+			        						if (r=="success") {
+			        							$.messager.show({
+			        								msg : "操作成功",
+			        								title : '成功'
+			        							});
+			        							datagrid.datagrid('reload');
+			        						} else {
+			        							$.messager.alert('错误',"操作失败", 'error');
+			        						}
+			        						datagrid.datagrid('unselectAll');
+			        					}
+			        				});
+			        			
+			        			}
+			        		})
+			        	}
+			        }}
 			        ]
 
 		});
@@ -167,23 +218,57 @@
 				}
 			}],
 			onOpen: function() {
-				
+				var data = $('#systemId').combobox('getData');
+				 $("#systemId").combobox('select',data[0].id);
 			},
 			onClose: function() {
 				$('#ff').form('clear');
 				datagrid.datagrid('unselectAll');
 				datagrid.datagrid('reload');
-				 $('#privilege-tree').tree('reload');
+				// $('#privilege-tree').tree('reload');
 			}
          });
 		 
-		 $('#privilege-tree').tree({
-			    checkbox: true,
-			    url: '/auth/menu/tree.do',
-			    onClick:function(node){
-				     alert('you click '+node.id);
-			    } 
-		   });
+		 
+		 $('#systemId').combobox({
+			 url: "${ctx}/site/all.do",
+			 valueField:'id',
+			 textField:'siteName',
+			   onLoadSuccess: function (data) {
+				  
+		             if (data&&data.length>0) {
+		            	 $("#systemId").combobox('select',data[0].id);
+		               
+		             } else {
+		            	 
+		            	 var defaultValue =[{"siteName": '请选择', "id": '-1'}];
+		            	 $("#systemId").combobox('loadData',defaultValue);
+		             }
+		             initTree();
+		         },
+		         onSelect: function(){
+		        	// $('#privilege-tree').tree('reload');
+	        		 var param ="systemId="+$('#systemId').combobox('getValue');
+	        		$.ajax({
+    					url : '${ctx}/role/edit'+$("#id").val()+'.do',
+    					data : param,
+    					dataType : 'json',
+    					success : function(r) {
+    						if (r.id) {
+    							
+    							 initTree(r.privileges);
+    							
+    						
+    						} else {
+    							
+    							$.messager.alert('错误', r.msg, 'error');
+    						}
+    					}
+    				});
+				 }
+		 });
+		 
+		// initTree();
 		 
 	    
 		$("#btn_search").click(function(){
@@ -191,8 +276,39 @@
 			datagrid.datagrid('load', param);
 
 		});
-		});
+	});
 	
+	function initTree(privileges) {
+		 $('#privilege-tree').tree({
+			    checkbox: true,
+			    url: '${ctx}/menu/tree.do',
+			    onClick:function(node){
+				    // alert('you click '+node.id);
+			    },
+			    onBeforeLoad: function(node, param) {
+			    	param.systemId=$('#systemId').combobox('getValue');
+			    	
+	                if (node == null) {
+	                   // $('#mm-tree').tree('options').url = "mm/getMMTypeList?mmid=";//加载顶层节点
+	                } else {
+	                   // $('#mm-tree').tree('options').url = "mm/getMMTypeList?mmid=" + node.id;//加载下层节点
+	                }
+	            },
+			    onLoadSuccess: function(node1, data) {
+			    	if(privileges){
+			    		
+			    	var array = privileges.split(',');
+                    for(var i=0;i<array.length;i++)  
+                    {
+                 	   if(array[i] != "") {
+                      	  var node = $('#privilege-tree').tree('find',array[i]); 
+                      	  if(node) $('#privilege-tree').tree('check',node.target);  
+                 	   }
+                    }  
+			    	}
+			    }
+		   });
+	}
 	
 	function GetNode(type){
         var node = $('#privilege-tree').tree('getChecked');
@@ -249,11 +365,16 @@
 
 			
 	<div id="dd" title="My Dialog"  style="width:600px;height:450px; text-align: center; " data-options="closed:true"> 
-				    <form id="ff" method="post" action="/auth/role/save.do" >
+				    <form id="ff" method="post" action="${ctx}/role/save.do" >
 				    		<input type="hidden" id="id" name="id">
 				    		<input type="hidden" id="privileges" name="privileges">
-				    	<div style="margin:10px 0">
+				    		<div style="margin:10px 0">
 								角色名:<input class="easyui-textbox" type="text" id="roleName"  name="roleName" data-options="required:true"></input>
+							</div>
+				    		<div style="margin:10px 0">
+								子系统：<select class="easyui-combobox" id="systemId" name="systemId"  style="width: 100px" >
+				    						
+				    				</select>
 							</div>
 							<div class="easyui-panel" style="padding:5px">
 								<ul id="privilege-tree" class="easyui-tree" data-options=""></ul>

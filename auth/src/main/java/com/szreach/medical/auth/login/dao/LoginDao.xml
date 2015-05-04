@@ -25,14 +25,18 @@
 	
 
 	
-	  <select id="queryMenuTree"  parameterType="int" resultMap="treeMap" >
+	  <select id="queryMenuTree"  resultMap="treeMap" >
        SELECT DISTINCT pt.id,pt.menu_name p_menu_name,pt.menu_icon p_menu_icon, m.id child_id, m.menu_name,m.menu_action,m.menu_icon from td_privilege p
 		INNER JOIN td_menu m on p.menu_id=m.id
 		INNER JOIN td_menu pt on pt.id=m.parent_id
 		
 		where p.role_id in (
-		 SELECT role_id from td_user_role where user_id=#{userId}
+		  SELECT role_id from td_user_role a
+			INNER JOIN td_role b on a.role_id=b.id
+			where b.role_status=0 and user_id=#{userId}
 		)
+		
+		and p.system_id=#{systemId}
 		
 		ORDER BY pt.menu_order,m.menu_order
        

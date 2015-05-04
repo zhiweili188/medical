@@ -25,5 +25,5 @@ public interface MenuService  extends BaseService<MenuBean> {
 	
 	//public List<MenuBean> queryMenu(MenuBean query,  PageBean page);
 	
-	public List<MenuBean> queryTree();
+	public List<MenuBean> queryTree(int systemId);
 }

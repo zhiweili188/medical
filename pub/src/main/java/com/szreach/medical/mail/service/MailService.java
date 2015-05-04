@@ -15,5 +15,5 @@ import org.springframework.mail.SimpleMailMessage;
  * @Version: 1.0
  */
 public interface MailService {
-	public void send(SimpleMailMessage msg, String templateName, Map<String, Object> model);
+	public void send(String to, String subject, String templateName, Map<String, Object> model);
 }

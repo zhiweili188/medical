@@ -57,8 +57,6 @@ public class CourseApplyServiceImpl extends AbstractBaseServiceImpl<Course> impl
 		
 		Course course = getByID(courseId);
 		if(course.getRemainApplyQuota() > 0) {
-			//还有剩余名额,剩余名额减1
-			courseApplyDao.decRemainQuota(courseId);
 			
 			//保存申请记录
 			UserCourseApply ucApply = new UserCourseApply();

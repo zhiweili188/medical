@@ -29,4 +29,8 @@ public interface BaseDao<T extends Persistentable> extends MapperMarker {
 	
 	public int countAll(@Param("query") T query);
 	public List<T> query(@Param("query") T query, @Param("page")  PageBean page);
+	
+	public void batchDel(List<Integer> idList);
+	public void batchUpdateStatus(@Param("list")List<Integer> idList, @Param("status")int status);
+	public void updateStatus(@Param("id")int id, @Param("status") int status);
 }

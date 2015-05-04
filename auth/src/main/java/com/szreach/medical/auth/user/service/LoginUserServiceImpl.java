@@ -17,6 +17,7 @@ import com.szreach.medical.auth.user.bean.LoginUser;
 import com.szreach.medical.auth.user.dao.LoginUserDao;
 import com.szreach.medical.auth.user.dao.UserRoleDao;
 import com.szreach.medical.common.base.AbstractBaseServiceImpl;
+import com.szreach.medical.common.base.BaseDao;
 import com.szreach.medical.common.base.PageBean;
 
 /**
@@ -35,6 +36,11 @@ public class LoginUserServiceImpl extends AbstractBaseServiceImpl<LoginUser>  im
 	@Autowired
 	private UserRoleDao userRoleDao;
 	
+	@Override
+	public BaseDao<LoginUser> getBaseDao() {
+		return loginUserDao;
+	}
+
 	@Override
 	public void insert(LoginUser user) {
 		user.setPassword("123456");
@@ -57,11 +63,11 @@ public class LoginUserServiceImpl extends AbstractBaseServiceImpl<LoginUser>  im
 		}
 	}
 
-	@Override
+/*	@Override
 	public LoginUser getByID(Integer loginUserId) {
 		return loginUserDao.get(loginUserId);
 	}
-	
+*/	
 	public LoginUser getByUserName(String userName) {
 		return loginUserDao.getByUserName(userName);
 	}
@@ -78,7 +84,7 @@ public class LoginUserServiceImpl extends AbstractBaseServiceImpl<LoginUser>  im
 		loginUserDao.updatePwd(user);
 	}
 
-	@Override
+	/*@Override
 	public int count(LoginUser query) {
 		return loginUserDao.countAll(query);
 	}
@@ -107,5 +113,17 @@ public class LoginUserServiceImpl extends AbstractBaseServiceImpl<LoginUser>  im
 			loginUserDao.batchDel(list);
 		}
 	}
+	public void updateStatus(String loginUserIds, int status) {
+		String[] ids = loginUserIds.split(",");
+		if(ids.length == 1) {
+			loginUserDao.updateStatus(Integer.valueOf(ids[0]), status);
+		} else {
+			List<Integer> list = new ArrayList<Integer>(ids.length);
+			for(String id : ids) {
+				list.add(Integer.valueOf(id));
+			}
+			loginUserDao.batchUpdateStatus(list, status);
+		}
+	}*/
 
 }

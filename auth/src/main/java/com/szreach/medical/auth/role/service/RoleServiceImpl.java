@@ -17,6 +17,7 @@ import com.szreach.medical.auth.role.bean.Privilege;
 import com.szreach.medical.auth.role.bean.Role;
 import com.szreach.medical.auth.role.dao.RoleDao;
 import com.szreach.medical.common.base.AbstractBaseServiceImpl;
+import com.szreach.medical.common.base.BaseDao;
 import com.szreach.medical.common.base.PageBean;
 
 /**
@@ -32,6 +33,12 @@ public class RoleServiceImpl  extends AbstractBaseServiceImpl<Role>  implements 
 
 	@Autowired
 	private RoleDao roleDao;
+	
+	@Override
+	public BaseDao<Role> getBaseDao() {
+		return roleDao;
+	}
+
 	@Override
 	public void insert(Role role) {
 		role.setRoleStatus(0);
@@ -50,32 +57,32 @@ public class RoleServiceImpl  extends AbstractBaseServiceImpl<Role>  implements 
 				for(String id : ids) {
 					menuIdList.add(Integer.valueOf(id));
 				}
-				roleDao.insertPrivilege(role.getId(), menuIdList);
+				roleDao.insertPrivilege(role.getId(), role.getSystemId(), menuIdList);
 		}
 	}
 
-	@Override
-	public Role getByID(Integer roleId) {
-		 List<Privilege> privileges = roleDao.getPrivilege(roleId);
-		 StringBuffer buf = new StringBuffer();
-		 for(Privilege p : privileges) {
-			 buf.append(p.getMenuId()).append(",");
-		 }
-		 if(buf.length() > 0) {
-			 
-			 buf.deleteCharAt(buf.length()-1);
-		 }
-		 
-		 Role role = roleDao.get(roleId);
-		 role.setPrivileges(buf.toString());
-		 
+
+	public Role getRoleByID(Integer roleId, Integer systemId) {
+		List<Privilege> privileges = roleDao.getPrivilege(roleId, systemId);
+		StringBuffer buf = new StringBuffer();
+		for(Privilege p : privileges) {
+			buf.append(p.getMenuId()).append(",");
+		}
+		if(buf.length() > 0) {
+			
+			buf.deleteCharAt(buf.length()-1);
+		}
+		
+		Role role = roleDao.get(roleId);
+		role.setPrivileges(buf.toString());
+		
 		return role;
 	}
 
 	@Override
 	public void update(Role role) {
 		roleDao.update(role);
-		roleDao.deletePrivilege(role.getId());
+		roleDao.deletePrivilege(role.getId(), role.getSystemId());
 		savePrivileges(role);
 	}
 

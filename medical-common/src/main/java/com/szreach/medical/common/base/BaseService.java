@@ -24,4 +24,8 @@ public interface BaseService<T extends Persistentable> {
 	
 	
 	public void delete(Integer id);
+	
+	public void deleteMore(String ids);
+	public void updateStatus(String ids, int status);
+	public int validate(T t);
 }

@@ -58,6 +58,14 @@
 	<update id="delete"  parameterType="int" >
 			update td_login_user set status=9 where id=#{id}
 	</update>
+	<update id="batchUpdateStatus" >
+		<foreach collection="list" item="id" index="idx"  open="" close=";" separator=";">
+			update td_login_user set status=${status} where id=${id}
+		</foreach>
+	</update>
+	<update id="updateStatus" >
+			update td_login_user set status=${status} where id=#{id}
+	</update>
 	
 	<select id="countAll" resultType="int">
         select count(*) c from td_login_user

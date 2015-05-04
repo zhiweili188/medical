@@ -1,30 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ include file="/WEB-INF/views/jsp/common.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
-<script src="/auth/js/easyui/jquery.min.js" type="text/javascript"></script>
-<script src="/auth/js/easyui/jquery.easyui.min.js" type="text/javascript"></script>
-<script src="/auth/js/easyui/locale/easyui-lang-zh_CN.js" type="text/javascript"></script>
-<script src="/auth/js/jquery.serializeJson.js" type="text/javascript"></script>
-<link href="/auth/js/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css" />
-<link href="/auth/js/easyui/themes/icon.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div style="margin:200px 400px;">
 	<div class="easyui-panel" title="登录" style="width:400px;">
 		<div style="padding:10px 60px 20px 60px">
-	    <form id="ff" class="easyui-form" method="post" action="/auth/login/ajaxLogin.do" data-options="novalidate:true">
+	    <form id="ff" class="easyui-form" method="post" action="${ctx}/login/ajaxLogin.do" data-options="novalidate:true">
 	    	<table cellpadding="5">
 	    		<tr>
 	    			<td>用户名:</td>
-	    			<td><input class="easyui-textbox" type="text" name="userName" data-options="required:true"></input></td>
+	    			<td><input class="easyui-textbox" type="text" id="username"  name="userName" data-options="required:true"></input></td>
 	    		</tr>
 	    		<tr>
 	    			<td>密码:</td>
-	    			<td><input class="easyui-textbox" type="password" name="password" data-options="required:true"></input></td>
+	    			<td><input class="easyui-textbox" type="password" id="password" name="password" data-options="required:true"></input></td>
 	    		</tr>
 	    	</table>
 	    </form>
@@ -40,7 +35,8 @@
 <script>
 var message=
 {
-	1:"用户名或密码错误"		
+	1:"用户名或密码错误",
+	2:"该帐号已停用"	
 };
 	function submitForm(){
 		$('#ff').form('submit',{
@@ -50,7 +46,7 @@ var message=
 		    success:function(r){
 		    	var data = eval('(' + r + ')');
 		       if(data.code == "0") {
-		    	   window.location = "/auth/login/main.do";
+		    	   window.location = "${ctx}/login/main.do";
 		       } else {
 		    	   $("#msgContent").html(message[data.code]);
 		    	   $("#msgContent").css("display","");
@@ -61,5 +57,15 @@ var message=
 	function clearForm(){
 		$('#ff').form('clear');
 	}
+$(function() {
+	$('.textbox-text').keydown(function(e) {
+		var keyCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode; 
+		if (keyCode == 13){ 
+			submitForm();      					
+		}
+	});
+	
+	$('#username').next().find("input").eq(0).focus();
+});
 </script>
 </html>

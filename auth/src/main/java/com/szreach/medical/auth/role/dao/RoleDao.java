@@ -21,8 +21,8 @@ import com.szreach.medical.common.base.BaseDao;
 public interface RoleDao  extends BaseDao<Role>{
 	//public int countAll(@Param("query") Role query);
 	//public List<Role> query(@Param("query") Role query, @Param("page")  PageBean page);
-	public void insertPrivilege(@Param("roleId") int roleId, @Param("list") List<Integer> menuIdList);
-	public List<Privilege> getPrivilege(int roleId);
-	public void deletePrivilege(int roleId);
+	public void insertPrivilege(@Param("roleId") int roleId, @Param("systemId") int systemId, @Param("list") List<Integer> menuIdList);
+	public List<Privilege> getPrivilege(@Param("roleId")int roleId, @Param("systemId") int systemId);
+	public void deletePrivilege(@Param("roleId")int roleId, @Param("systemId") int systemId);
 	public List<Role> getChoosableRoles(int userId);
 }

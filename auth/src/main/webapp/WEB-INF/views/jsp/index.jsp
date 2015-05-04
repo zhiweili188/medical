@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-   <%@ include file="/WEB-INF/views/jsp/common.jsp" %>
+ <%@ include file="/WEB-INF/views/jsp/common.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
@@ -8,6 +8,7 @@
 		<meta http-equiv="cache-control" content="no-cache">
 		<meta http-equiv="expires" content="0">
 		<title></title>
+		  
 	   
 <script type="text/javascript">
 var lastTabs = new Array(); 
@@ -141,24 +142,18 @@ line-height: 30px;
     </div>
     <div region="west" split="true" title="导航菜单" style="width: 200px;">
     	<div id="aa" class="easyui-accordion" >
-    		<div title="开发者"  atitle="博文管理" iconcls="icon-save" style="overflow: auto; padding: 10px; border: 1px solid #000;">
+    		<!--<div title="开发者"  atitle="博文管理" iconcls="icon-save" style="overflow: auto; padding: 10px; border: 1px solid #000;">
     			<ul style="list-style: none; margin: 0; width: 100%; padding: 0; text-align: center; vertical-align: middle;">
-    				<li href="/auth/menu/index.do"  title="菜单管理">菜单管理
+    				<li href="${ctx}/menu/index.do"  title="菜单管理">菜单管理
     			</ul>
     		</div>
-    		<!-- <div title="博文管理"  atitle="博文管理" iconcls="icon-save" style="overflow: auto; padding: 10px; border: 1px solid #000;">
-    			<ul style="list-style: none; margin: 0; width: 100%; padding: 0; text-align: center; vertical-align: middle;">
-    				<li href="/auth/user/index.do"  title="用户管理">用户管理
-    				<li href="/auth/menu/index.do"  title="菜单管理">菜单管理
-    				<li href="/auth/role/index.do"  title="角色管理">角色管理
-    			</ul>
-    		</div> -->
+    		 -->
 
             <c:forEach items="${menuList}" var="m">
             	<div title="${m.menuName }"  atitle="博文管理" iconcls="icon-save" style="overflow: auto; padding: 10px; border: 1px solid #000;">
     			<ul style="list-style: none; margin: 0; width: 100%; padding: 0; text-align: center; vertical-align: middle;">
     				<c:forEach items="${m.children}" var="child">
-    					<li href="${child.menuAction }"  title="${child.menuName }">${child.menuName }
+    					<li href="${ctx }${child.menuAction }"  title="${child.menuName }">${child.menuName }
     				</c:forEach>
     			</ul>
     		</div>
